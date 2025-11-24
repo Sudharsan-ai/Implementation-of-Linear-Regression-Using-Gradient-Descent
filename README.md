@@ -25,50 +25,34 @@ RegisterNumber:  212224040334
 *\
 ```
 ```
-/*import numpy as np
+import numpy as np
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import SGDRegressor
 
-def linear_regression(X1,y,learning_rate=0.01,num_iters=1000):
-    X=np.c_[np.ones(len(X1)),X1]
-    theta=np.zeros(X.shape[1]).reshape(-1,1)
-    for _ in range(num_iters):
-        predictions=(X).dot(theta).reshape(-1,1)
-        errors=(predictions-y).reshape(-1,1)
-        theta_=learning_rate*(1/len(X1))*X.T.dot(errors)
-        pass
-    return theta
+# Load dataset
+data = pd.read_csv("50_Startups.csv")
 
+# Use only numeric columns (drop 'State')
+X = data.iloc[:, [0, 1, 2]].values  # R&D, Administration, Marketing Spend
+y = data.iloc[:, -1].values        # Profit
 
-data=pd.read_csv('50_Startups.csv',header=None)
-print(data.head())
+# Scaling the features
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
 
+# Linear Regression using Gradient Descent
+model = SGDRegressor(max_iter=10000, learning_rate='constant', eta0=0.01)
+model.fit(X_scaled, y)
 
-X=(data.iloc[1:, :-2].values)
-print(X)
+# New data for prediction
+new_data = np.array([[165349.2, 136897.8, 471784.1]])
+new_scaled = scaler.transform(new_data)
 
+# Predict profit
+prediction = model.predict(new_scaled)
+print("Predicted Profit:", prediction[0])
 
-X1=X.astype(float)
-scaler=StandardScaler()
-y=(data.iloc[1:,-1].values).reshape(-1,1)
-print(y)
-
-
-X1_Scaled=scaler.fit_transform(X1)
-Y1_Scaled=scaler.fit_transform(y)
-
-
-print(X1_Scaled)
-print(Y1_Scaled)
-
-theta=linear_regression(X1_Scaled,Y1_Scaled)
-new_data=np.array([165349.2,136897.8,471784.1]).reshape(-1,1)
-new_Scaled=scaler.fit_transform(new_data)
-prediction=np.dot(np.append(1,new_Scaled),theta)
-prediction=prediction.reshape(-1,1)
-pre=scaler.inverse_transform(prediction)
-print(f"Predicted value: {pre}")
-*/
 ```
 
 ## Output:
